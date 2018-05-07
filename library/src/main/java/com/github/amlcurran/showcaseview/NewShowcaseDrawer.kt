@@ -17,11 +17,10 @@
 package com.github.amlcurran.showcaseview
 
 import android.content.res.Resources
-import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.Canvas
 
-internal class NewShowcaseDrawer @JvmOverloads constructor(resources: Resources, theme: Resources.Theme, style: TypedArray? = null, private val parentView: ShowcaseView? = null) : StandardShowcaseDrawer(resources, theme) {
+internal class NewShowcaseDrawer @JvmOverloads constructor(private val resources: Resources, theme: Resources.Theme, private val parentView: ShowcaseView? = null) : StandardShowcaseDrawer(resources, theme) {
     var outerRadius: Float = 0.toFloat()
         set(value) {
             field = value
@@ -34,17 +33,25 @@ internal class NewShowcaseDrawer @JvmOverloads constructor(resources: Resources,
         }
 
     init {
-        outerRadius = style?.getDimension(R.styleable.ShowcaseView_sv_innerRadius, resources.getDimension(R.dimen.showcase_radius_inner)) ?: resources.getDimension(R.dimen.showcase_radius_inner)
-        innerRadius = style?.getDimension(R.styleable.ShowcaseView_sv_outerRadius, resources.getDimension(R.dimen.showcase_radius_inner)) ?: resources.getDimension(R.dimen.showcase_radius_outer)
+        outerRadius = resources.getDimension(R.dimen.showcase_radius_inner)
+        innerRadius = resources.getDimension(R.dimen.showcase_radius_outer)
     }
 
     override fun setShowcaseColour(color: Int) {
         eraserPaint.color = color
     }
 
+    fun setOuterRadius(outerRadiusDimen: Int) {
+        outerRadius = resources.getDimension(outerRadiusDimen)
+    }
+
+    fun setInnerRadius(innerRadiusDimen: Int) {
+        innerRadius = resources.getDimension(innerRadiusDimen)
+    }
+
     override fun drawShowcase(buffer: Bitmap, x: Float, y: Float, scaleMultiplier: Float) {
         val bufferCanvas = Canvas(buffer)
-        eraserPaint.alpha = ALPHA_60_PERCENT
+        eraserPaint.alpha = ALPHA_45_PERCENT
         bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint)
         eraserPaint.alpha = 0
         bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint)
@@ -57,7 +64,7 @@ internal class NewShowcaseDrawer @JvmOverloads constructor(resources: Resources,
     override fun getBlockedRadius() = innerRadius
 
     companion object {
-        private const val ALPHA_60_PERCENT = 153
+        private const val ALPHA_45_PERCENT = 140
     }
 
 }

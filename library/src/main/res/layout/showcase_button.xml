@@ -15,7 +15,13 @@
   ~ limitations under the License.
   -->
 
-<Button xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/ShowcaseButton"
-    android:text="@android:string/ok"
-    android:id="@id/showcase_button" />
+<ImageButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/showcase_button"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:layout_marginStart="@dimen/skip_button_side_margin"
+    android:layout_marginTop="@dimen/skip_button_top_margin"
+    android:background="@android:color/transparent"
+    android:scaleType="centerInside"
+    android:src="@drawable/close_x"/>

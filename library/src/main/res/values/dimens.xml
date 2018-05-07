@@ -23,4 +23,6 @@
     <dimen name="showcase_radius_inner">96dp</dimen>
     <dimen name="showcase_radius_outer">128dp</dimen>
     <dimen name="showcase_radius_material">48dip</dimen>
+    <dimen name="skip_button_side_margin">24dp</dimen>
+    <dimen name="skip_button_top_margin">48dp</dimen>
 </resources>

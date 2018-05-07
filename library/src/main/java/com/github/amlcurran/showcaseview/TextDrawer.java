@@ -134,7 +134,7 @@ class TextDrawer {
      */
     public void calculateTextPosition(int canvasW, int canvasH, boolean shouldCentreText, Rect showcase) {
 
-        int[] areas = new int[4]; //left, top, right, bottom
+        int[] areas = new int[4]; //left, top, right, bottom, centered
     	areas[ShowcaseView.LEFT_OF_SHOWCASE] = showcase.left * canvasH;
     	areas[ShowcaseView.ABOVE_SHOWCASE] = showcase.top * canvasW;
     	areas[ShowcaseView.RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;
@@ -174,18 +174,9 @@ class TextDrawer {
     		break;
     	}
     	if(shouldCentreText) {
-	    	// Center text vertically or horizontally
-	    	switch(largest) {
-	    	case ShowcaseView.LEFT_OF_SHOWCASE:
-	    	case ShowcaseView.RIGHT_OF_SHOWCASE:
-	    		mBestTextPosition[INDEX_TEXT_START_Y] += canvasH / 4;
-	    		break;
-	    	case ShowcaseView.ABOVE_SHOWCASE:
-	    	case ShowcaseView.BELOW_SHOWCASE:
-	    		mBestTextPosition[INDEX_TEXT_WIDTH] /= 2;
-	    		mBestTextPosition[INDEX_TEXT_START_X] += canvasW / 4;
-	    		break;
-	    	} 
+            mBestTextPosition[INDEX_TEXT_START_Y] += canvasH / 4;
+            mBestTextPosition[INDEX_TEXT_WIDTH] /= 2;
+            mBestTextPosition[INDEX_TEXT_START_X] += canvasW / 4;
     	} else {
     		// As text is not centered add actionbar padding if the text is left or right
 	    	switch(largest) {
