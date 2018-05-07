@@ -428,8 +428,8 @@ public class ShowcaseView extends RelativeLayout
 
         private ViewGroup parent;
         private int parentIndex;
-        private int innerRadiusDimen;
-        private int outerRadiusDimen;
+        private float innerRadius;
+        private float outerRadius;
 
         public Builder(Activity activity) {
             this(activity, false);
@@ -447,8 +447,8 @@ public class ShowcaseView extends RelativeLayout
             this.showcaseView.setTarget(Target.NONE);
             this.parent = (ViewGroup) activity.findViewById(android.R.id.content);
             this.parentIndex = parent.getChildCount();
-            this.innerRadiusDimen = R.dimen.showcase_radius_inner;
-            this.outerRadiusDimen = R.dimen.showcase_radius_outer;
+            this.innerRadius = activity.getResources().getDimensionPixelSize(R.dimen.showcase_radius_inner);
+            this.outerRadius = activity.getResources().getDimensionPixelSize(R.dimen.showcase_radius_outer);
         }
 
         /**
@@ -485,19 +485,40 @@ public class ShowcaseView extends RelativeLayout
             return setShowcaseDrawer(new MaterialShowcaseDrawer(activity.getResources()));
         }
 
-        public Builder withInnerRadius(int innerRadiusDimen) {
-            this.innerRadiusDimen = innerRadiusDimen;
+        public Builder setInnerRadiusDimen(int innerRadiusDimen) {
+            this.innerRadius = this.activity.getResources().getDimensionPixelSize(innerRadiusDimen);
             if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
-                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerRadius(innerRadiusDimen);
+                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerRadius(this.innerRadius);
             }
             return this;
         }
 
-        public Builder withOuterRadius(int outerRadiusDimen) {
-            this.outerRadiusDimen = outerRadiusDimen;
+        public Builder setInnerRadiusPx(int innerRadius) {
+            this.innerRadius = innerRadius;
             if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
-                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(outerRadiusDimen);
+                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerRadius(innerRadius);
             }
+            return this;
+        }
+
+        public Builder setOuterRadiusDimen(int outerRadiusDimen) {
+            this.outerRadius = this.activity.getResources().getDimensionPixelSize(outerRadiusDimen);
+            if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
+                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(this.outerRadius);
+            }
+            return this;
+        }
+
+        public Builder setOuterRadiusPx(int outerRadius) {
+            this.outerRadius = outerRadius;
+            if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
+                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(this.outerRadius);
+            }
+            return this;
+        }
+
+        public Builder hideButton() {
+            this.showcaseView.hideButton();
             return this;
         }
 
@@ -507,8 +528,8 @@ public class ShowcaseView extends RelativeLayout
         public Builder setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
             showcaseView.setShowcaseDrawer(showcaseDrawer);
             if (this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
-                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerRadius(this.innerRadiusDimen);
-                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(this.outerRadiusDimen);
+                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerRadius(this.innerRadius);
+                ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(this.outerRadius);
             }
             return this;
         }

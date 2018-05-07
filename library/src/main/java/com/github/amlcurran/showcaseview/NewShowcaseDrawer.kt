@@ -41,14 +41,6 @@ internal class NewShowcaseDrawer @JvmOverloads constructor(private val resources
         eraserPaint.color = color
     }
 
-    fun setOuterRadius(outerRadiusDimen: Int) {
-        outerRadius = resources.getDimension(outerRadiusDimen)
-    }
-
-    fun setInnerRadius(innerRadiusDimen: Int) {
-        innerRadius = resources.getDimension(innerRadiusDimen)
-    }
-
     override fun drawShowcase(buffer: Bitmap, x: Float, y: Float, scaleMultiplier: Float) {
         val bufferCanvas = Canvas(buffer)
         eraserPaint.alpha = ALPHA_45_PERCENT
