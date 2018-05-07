@@ -16,6 +16,7 @@
 
 package com.github.amlcurran.showcaseview;
 
+import android.graphics.Typeface;
 import android.widget.RelativeLayout;
 
 /**
@@ -38,6 +39,8 @@ public interface ShowcaseViewApi {
     void setBlocksTouches(boolean blockTouches);
 
     void setStyle(int theme);
+
+    void setStyle(int theme, Typeface titleTypeface, Typeface detailTypeface);
 
     boolean isShowing();
 }

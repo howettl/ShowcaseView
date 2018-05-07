@@ -24,10 +24,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.support.annotation.IntDef;
 import android.text.Layout;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -127,7 +127,7 @@ public class ShowcaseView extends RelativeLayout
         }
         textDrawer = new TextDrawer(getResources(), getContext());
 
-        updateStyle(styled, false);
+        updateStyle(styled, false, null, null);
 
         init();
     }
@@ -562,6 +562,11 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        public Builder setStyle(int theme, Typeface titleTypeface, Typeface detailTypeface) {
+            showcaseView.setStyle(theme, titleTypeface, detailTypeface);
+            return this;
+        }
+
         /**
          * Set a listener which will override the button clicks.
          * <p/>
@@ -768,7 +773,16 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void setStyle(int theme) {
         TypedArray array = getContext().obtainStyledAttributes(theme, R.styleable.ShowcaseView);
-        updateStyle(array, true);
+        updateStyle(array, true, null, null);
+    }
+
+    /**
+     * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#setStyle(int)
+     */
+    @Override
+    public void setStyle(int theme, Typeface titleTypeface, Typeface detailTypeface) {
+        TypedArray array = getContext().obtainStyledAttributes(theme, R.styleable.ShowcaseView);
+        updateStyle(array, true, titleTypeface, detailTypeface);
     }
 
     @Override
@@ -776,14 +790,9 @@ public class ShowcaseView extends RelativeLayout
         return isShowing;
     }
 
-    private void updateStyle(TypedArray styled, boolean invalidate) {
+    private void updateStyle(TypedArray styled, boolean invalidate, Typeface titleTypeface, Typeface detailTypeface) {
         backgroundColor = styled.getColor(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
         showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
-        String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
-        if (TextUtils.isEmpty(buttonText)) {
-            buttonText = getResources().getString(android.R.string.ok);
-        }
-        boolean tintButton = styled.getBoolean(R.styleable.ShowcaseView_sv_tintButtonColor, true);
 
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
                 R.style.TextAppearance_ShowcaseView_Title);
@@ -794,8 +803,10 @@ public class ShowcaseView extends RelativeLayout
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
         showcaseDrawer.setBackgroundColour(backgroundColor);
-        textDrawer.setTitleStyling(titleTextAppearance);
-        textDrawer.setDetailStyling(detailTextAppearance);
+        if (titleTypeface == null) textDrawer.setTitleStyling(titleTextAppearance);
+        else textDrawer.setTitleStyling(titleTextAppearance, titleTypeface);
+        if (detailTypeface == null) textDrawer.setDetailStyling(detailTextAppearance);
+        else textDrawer.setDetailStyling(detailTextAppearance, detailTypeface);
         hasAlteredText = true;
 
         if (invalidate) {

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -195,8 +196,18 @@ class TextDrawer {
         setContentTitle(titleString);
     }
 
+    public void setTitleStyling(int styleId, Typeface typeface) {
+        titleSpan = new CustomTypefaceSpan(this.context, styleId, typeface);
+        setContentTitle(titleString);
+    }
+
     public void setDetailStyling(int styleId) {
         textSpan = new TextAppearanceSpan(this.context, styleId);
+        setContentText(textString);
+    }
+
+    public void setDetailStyling(int styleId, Typeface typeface) {
+        textSpan = new CustomTypefaceSpan(this.context, styleId, typeface);
         setContentText(textString);
     }
 
