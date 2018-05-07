@@ -27,6 +27,8 @@
         <attr name="sv_titleTextAppearance" format="reference" />
         <attr name="sv_showcaseColor" format="color|reference" />
         <attr name="sv_tintButtonColor" format="boolean|reference" />
+        <attr name="sv_innerRadius" format="dimension|reference" />
+        <attr name="sv_outerRadius" format="dimension|reference" />
     </declare-styleable>
     <declare-styleable name="CustomTheme">
         <attr name="showcaseViewStyle" format="reference" />

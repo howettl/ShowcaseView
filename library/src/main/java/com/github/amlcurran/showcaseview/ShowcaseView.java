@@ -114,7 +114,7 @@ public class ShowcaseView extends RelativeLayout
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
-                        R.style.ShowcaseView);
+                R.style.ShowcaseView);
 
         // Set the default animation times
         fadeInMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -122,7 +122,7 @@ public class ShowcaseView extends RelativeLayout
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
         if (newStyle) {
-            showcaseDrawer = new NewShowcaseDrawer(getResources(), context.getTheme());
+            showcaseDrawer = new NewShowcaseDrawer(getResources(), context.getTheme(), styled, this);
         } else {
             showcaseDrawer = new StandardShowcaseDrawer(getResources(), context.getTheme());
         }
@@ -437,6 +437,7 @@ public class ShowcaseView extends RelativeLayout
 
         private ViewGroup parent;
         private int parentIndex;
+        private int theme;
 
         public Builder(Activity activity) {
             this(activity, false);
@@ -454,6 +455,7 @@ public class ShowcaseView extends RelativeLayout
             this.showcaseView.setTarget(Target.NONE);
             this.parent = (ViewGroup) activity.findViewById(android.R.id.content);
             this.parentIndex = parent.getChildCount();
+            this.theme = -1;
         }
 
         /**
@@ -479,7 +481,9 @@ public class ShowcaseView extends RelativeLayout
          * <img alt="Holo showcase example" src="../../../../../../../../example.png" />
          */
         public Builder withNewStyleShowcase() {
-            return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources(), activity.getTheme()));
+            if (this.theme > -1) {
+                return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources(), activity.getTheme(), activity.obtainStyledAttributes(this.theme, R.styleable.ShowcaseView)));
+            } else return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources(), activity.getTheme()));
         }
 
         /**
@@ -543,6 +547,7 @@ public class ShowcaseView extends RelativeLayout
          * Set the style of the ShowcaseView. See the sample app for example styles.
          */
         public Builder setStyle(int theme) {
+            this.theme = theme;
             showcaseView.setStyle(theme);
             return this;
         }
@@ -799,10 +804,17 @@ public class ShowcaseView extends RelativeLayout
         int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
                 R.style.TextAppearance_ShowcaseView_Detail);
 
+        float innerRadius = styled.getDimension(R.styleable.ShowcaseView_sv_innerRadius, getResources().getDimension(R.dimen.showcase_radius_inner));
+        float outerRadius = styled.getDimension(R.styleable.ShowcaseView_sv_outerRadius, getResources().getDimension(R.dimen.showcase_radius_outer));
+
         styled.recycle();
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
         showcaseDrawer.setBackgroundColour(backgroundColor);
+        if (showcaseDrawer instanceof NewShowcaseDrawer) {
+            ((NewShowcaseDrawer) showcaseDrawer).setInnerRadius(innerRadius);
+            ((NewShowcaseDrawer) showcaseDrawer).setOuterRadius(outerRadius);
+        }
         tintButton(showcaseColor, tintButton);
         mEndButton.setText(buttonText);
         textDrawer.setTitleStyling(titleTextAppearance);
