@@ -362,20 +362,16 @@ public class ShowcaseView extends RelativeLayout
             return true;
         }
 
-        float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-        float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
-        double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
-
         if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
-                hideOnTouch && distanceFromFocus > showcaseDrawer.getBlockedRadius()) {
+                hideOnTouch && showcaseDrawer.isWithinBlockedArea(showcaseX, showcaseY, motionEvent.getRawX(), motionEvent.getRawY())) {
             this.hide();
             return true;
         }
 
-        boolean blocked = blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
+        boolean blocked = blockTouches && showcaseDrawer.isWithinBlockedArea(showcaseX, showcaseY, motionEvent.getRawX(), motionEvent.getRawY());
         if (blocked) {
             mEventListener.onShowcaseViewTouchBlocked(motionEvent);
-        }
+        } else mEventListener.onShowcaseViewTouchNotBlocked(motionEvent);
         return blocked;
     }
 
@@ -430,6 +426,10 @@ public class ShowcaseView extends RelativeLayout
         private int parentIndex;
         private float innerRadius;
         private float outerRadius;
+        private int innerHeight;
+        private int innerWidth;
+        private int outerHeight;
+        private int outerWidth;
 
         public Builder(Activity activity) {
             this(activity, false);
@@ -449,6 +449,10 @@ public class ShowcaseView extends RelativeLayout
             this.parentIndex = parent.getChildCount();
             this.innerRadius = activity.getResources().getDimensionPixelSize(R.dimen.showcase_radius_inner);
             this.outerRadius = activity.getResources().getDimensionPixelSize(R.dimen.showcase_radius_outer);
+            this.innerHeight = 0;
+            this.innerWidth = 0;
+            this.outerHeight = 0;
+            this.outerWidth = 0;
         }
 
         /**
@@ -477,6 +481,10 @@ public class ShowcaseView extends RelativeLayout
             return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources(), activity.getTheme()));
         }
 
+        public Builder withOvalStyleShowcase() {
+            return setShowcaseDrawer(new OvalShowcaseDrawer(activity.getResources(), activity.getTheme()));
+        }
+
         /**
          * Draw a material style showcase.
          * <img alt="Material showcase" src="../../../../../../../../material.png" />
@@ -501,6 +509,16 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        public Builder setInnerHeightWidthPx(int height, int width) {
+            this.innerHeight = height;
+            this.innerWidth = width;
+            if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof OvalShowcaseDrawer) {
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerHeight(height);
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerWidth(width);
+            }
+            return this;
+        }
+
         public Builder setOuterRadiusDimen(int outerRadiusDimen) {
             this.outerRadius = this.activity.getResources().getDimensionPixelSize(outerRadiusDimen);
             if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
@@ -513,6 +531,16 @@ public class ShowcaseView extends RelativeLayout
             this.outerRadius = outerRadius;
             if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
                 ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(this.outerRadius);
+            }
+            return this;
+        }
+
+        public Builder setOuterHeightWidthPx(int height, int width) {
+            this.outerHeight = height;
+            this.outerWidth = width;
+            if (this.showcaseView.showcaseDrawer != null && this.showcaseView.showcaseDrawer instanceof OvalShowcaseDrawer) {
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterHeight(height);
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterWidth(width);
             }
             return this;
         }
@@ -530,6 +558,12 @@ public class ShowcaseView extends RelativeLayout
             if (this.showcaseView.showcaseDrawer instanceof NewShowcaseDrawer) {
                 ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerRadius(this.innerRadius);
                 ((NewShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterRadius(this.outerRadius);
+            }
+            if (this.showcaseView.showcaseDrawer instanceof OvalShowcaseDrawer) {
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerWidth(this.innerWidth);
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setInnerHeight(this.innerHeight);
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterWidth(this.outerWidth);
+                ((OvalShowcaseDrawer) this.showcaseView.showcaseDrawer).setOuterHeight(this.outerHeight);
             }
             return this;
         }
@@ -691,7 +725,7 @@ public class ShowcaseView extends RelativeLayout
 
     private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
         this.showcaseDrawer = showcaseDrawer;
-        this.showcaseDrawer.setBackgroundColour(backgroundColor);
+        this.showcaseDrawer.setBackgroundColor(backgroundColor);
         this.showcaseDrawer.setShowcaseColour(showcaseColor);
         hasAlteredText = true;
         invalidate();
@@ -823,7 +857,7 @@ public class ShowcaseView extends RelativeLayout
         styled.recycle();
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
-        showcaseDrawer.setBackgroundColour(backgroundColor);
+        showcaseDrawer.setBackgroundColor(backgroundColor);
         if (titleTypeface == null) textDrawer.setTitleStyling(titleTextAppearance);
         else textDrawer.setTitleStyling(titleTextAppearance, titleTypeface);
         if (detailTypeface == null) textDrawer.setDetailStyling(detailTextAppearance);

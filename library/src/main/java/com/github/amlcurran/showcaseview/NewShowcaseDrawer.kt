@@ -20,7 +20,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 
-internal class NewShowcaseDrawer @JvmOverloads constructor(private val resources: Resources, theme: Resources.Theme, private val parentView: ShowcaseView? = null) : StandardShowcaseDrawer(resources, theme) {
+internal class NewShowcaseDrawer @JvmOverloads constructor(resources: Resources, theme: Resources.Theme, private val parentView: ShowcaseView? = null) : StandardShowcaseDrawer(resources, theme) {
     var outerRadius: Float = 0.toFloat()
         set(value) {
             field = value
@@ -31,6 +31,8 @@ internal class NewShowcaseDrawer @JvmOverloads constructor(private val resources
             field = value
             parentView?.invalidate()
         }
+    override val showcaseWidth = (outerRadius * 2).toInt()
+    override val showcaseHeight = (outerRadius * 2).toInt()
 
     init {
         outerRadius = resources.getDimension(R.dimen.showcase_radius_inner)
@@ -49,11 +51,12 @@ internal class NewShowcaseDrawer @JvmOverloads constructor(private val resources
         bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint)
     }
 
-    override fun getShowcaseWidth() = (outerRadius * 2).toInt()
-
-    override fun getShowcaseHeight() = (outerRadius * 2).toInt()
-
-    override fun getBlockedRadius() = innerRadius
+    override fun isWithinBlockedArea(centerX: Float, centerY: Float, rawX: Float, rawY: Float): Boolean {
+        val xDelta = Math.abs(rawX - centerX).toDouble()
+        val yDelta = Math.abs(rawY - centerY).toDouble()
+        val distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2.0) + Math.pow(yDelta, 2.0))
+        return distanceFromFocus > innerRadius
+    }
 
     companion object {
         private const val ALPHA_45_PERCENT = 140

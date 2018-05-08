@@ -26,4 +26,9 @@ public class SimpleShowcaseEventListener implements OnShowcaseEventListener {
     public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
         // Override to do stuff
     }
+
+    @Override
+    public void onShowcaseViewTouchNotBlocked(MotionEvent motionEvent) {
+        // Override to do stuff
+    }
 }
